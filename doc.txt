@@ -1,0 +1,14 @@
+Images to video
+--------------------------
+ffmpeg -r 1 -i img%02d.png -c:v libx264 -vf fps=1 -pix_fmt yuv420p animation.mp4
+
+
+Video to GIF
+--------------------------
+ffmpeg -i animation.mp4 -pix_fmt rgb24 -loop 0 animation.gif
+
+
+Run Prolog program
+--------------------------
+swipl -s coloring-australia.pl
+main(WA, NT, SA, NSW, V, Q, T).
