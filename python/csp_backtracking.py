@@ -72,7 +72,7 @@ def ac3(variables, domains, unary_constraints, binary_constraints):
             # Select any binary_constraint from the worklist
             binary_constraint = worklist.pop()
 
-            print(variable)
+            #print(variable)
             domain_y = domains[binary_constraint[0]] if binary_constraint[0] != variable else domains[binary_constraint[1]]
 
             change, new_domain_x = arc_reduce(binary_constraint, domains[variable], domain_y)
@@ -146,7 +146,6 @@ def select_unassigned_variable(csp, assignment, mrv=False):
     """
     if mrv:
         remaining_values = ac3(csp[0], dict(zip(csp[0], [csp[1]]*len(csp[0]))), assignment, csp[2])
-        print(remaining_values)
         remaining_values = {k: v for k, v in remaining_values.items() if not k in assignment.keys()}
         min_remaining = min(remaining_values.items(), key=lambda x: len(x[1]))
         next_variable = min_remaining[0]
@@ -197,23 +196,20 @@ def backtrack(csp, assignment, mrv=False):
 
 
 def plot_histogram(xs):
-    bins = np.linspace(0, 1000, 1000)
+    bins = np.linspace(0, 100, 100)
     for x in xs:
         plt.hist(x, bins=bins, alpha=0.5)
+
+    plt.xlabel("# steps")
+    plt.ylabel("# of runs")
 
     plt.show()
 
 
 def run_map_coloring(country, mrv=False):
-    #constraints = {"NSW": ["V", "Q", "SA", "ACT"], "V": ["SA", "NSW"],
-    #               "Q": ["NT", "SA", "NSW"], "SA": ["WA", "NT", "Q", "V", "NSW"],
-    #               "WA": ["SA", "NT"], "T": ["V"], "NT": ["WA", "SA", "Q"], "ACT": ["NSW"]}
-    #variables = ["NSW", "WA", "NT", "SA", "Q", "V", "T", "ACT"]
-    #domain_values = ["red", "green", "blue", 'yellow']
     constraints = country.constraints
     variables = country.variables
     domain_values = ["red", "green", "blue", 'yellow']
-
 
     binary_constraints = make_constraints_binary(constraints)
 
@@ -229,7 +225,7 @@ def compare_mrv_random(country):
     for mrv in [True]:
         length_assignments = list()
 
-        for _ in range(1000):
+        for _ in range(100000):
             result = run_map_coloring(mrv=mrv, country=country)
             print(len(assignments))
             length_assignments.append(len(assignments))
@@ -241,11 +237,12 @@ def compare_mrv_random(country):
 
 if __name__ == "__main__":
     country = Australia()
-    result = run_map_coloring(country=country, mrv=True)
+    result = run_map_coloring(country=country, mrv=False)
+
     plot_country(country=country, state_colors=result)
     pp.pprint(assignments)
 
-    for i, assignment in enumerate(assignments):
-        plot_country(country=country, state_colors=assignment, save=True, name="img/{}/img{}".format(country.name, str(i).zfill(2)))
+    #for i, assignment in enumerate(assignments):
+    #    plot_country(country=country, state_colors=assignment, save=True, name="img/{}/img{}".format(country.name, str(i).zfill(2)))
 
     compare_mrv_random(country=country)
